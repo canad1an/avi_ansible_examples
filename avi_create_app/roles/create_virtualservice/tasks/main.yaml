@@ -1,0 +1,53 @@
+- set_fact:
+    pool_servers: []
+  name: Create Empty List
+
+- set_fact:
+    pool_servers: "{{ pool_servers | default([]) + [{'port': item.port, 'ip': {'type': 'V4', 'addr': item.ip_address },'enabled': item.enabled}]}}"
+  loop: "{{ applications.app_pool_members }}"
+  name: Build Pool Members
+
+- name: Create vsvip
+  avi_vsvip:
+    avi_credentials: "{{ avi_info.avi_credentials }}"
+    name: "vsvip-{{ applications.app_name }}"
+    vrf_context_ref: "/api/vrfcontext/?name=global"
+    tenant_ref: "/api/tenant/?name={{ avi_info.tenant }}"
+    cloud_ref: "/api/cloud/?name={{ avi_info.avi_cloud }}"
+    state: "{{ applications.state }}"
+    vip:
+      - vip_id: '1'
+        avi_allocated_fip: true
+        auto_allocate_ip: true
+        enabled: true
+        auto_allocate_floating_ip: false
+        avi_allocated_vip: true
+        auto_allocate_ip_type: V4_ONLY
+
+- name: Create Pool
+  avi_pool:
+    avi_credentials: "{{ avi_info.avi_credentials }}"
+    name: "pool-{{ applications.app_name }}"
+    tenant: "{{ avi_info.tenant }}"
+    cloud_ref: "/api/cloud/?name={{ avi_info.avi_cloud }}"
+    state: "{{ applications.state }}"
+    servers: "{{ pool_servers }}"
+    health_monitor_refs:
+      - "/api/healthmonitor/?name={{ applications.app_health_monitor }}"
+
+- name: Create VirtualService
+  avi_virtualservice:
+    avi_credentials: "{{ avi_info.avi_credentials }}"
+    name: "vs-{{ applications.app_name }}"
+    vrf_context_ref: "/api/vrfcontext/?name=global"
+    tenant: "{{ avi_info.tenant }}"
+    cloud_ref: "/api/cloud/?name={{ avi_info.avi_cloud }}"
+    state: "{{ applications.state }}"
+    application_profile_ref: "/api/applicationprofile/?name={{ applications.app_http_profile }}"
+    enabled: true
+    network_profile_ref: "/api/networkprofile/?name={{ applications.app_network_profile }}"
+    pool_ref: "/api/pool/?name=pool-{{ applications.app_name }}"
+    vsvip_ref: "/api/vsvip/?name=vsvip-{{ applications.app_name }}"
+    services:
+      - enable_ssl: false
+        port: "{{ applications.app_port }}"

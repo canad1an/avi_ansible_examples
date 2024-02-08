@@ -1,0 +1,23 @@
+---
+- name: Examples of using Ansible with Avi
+  hosts: localhost
+  gather_facts: false
+
+  collections: 
+    - vmware.alb
+
+  vars_files:
+    - "vars/creds.yaml"
+
+  tasks:
+
+    - name: Create VS
+      include_role:
+        name: create_virtualservice
+      with_items: "{{ applications }}"
+      vars:
+        - avi_info: "{{ avi_controller_info }}"
+      loop_control:
+        loop_var: applications
+
+# export ANSIBLE_HOST_KEY_CHECKING=False; ansible-playbook main.yaml
