@@ -34,4 +34,3 @@ avi_controller_info:
   avi_cloud: "vcenter-cloud"
   tenant: "admin"
   network: "vip-traffic"
-  subnet: "10.206.112.0/22"
