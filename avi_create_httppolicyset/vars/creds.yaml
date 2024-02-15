@@ -1,0 +1,8 @@
+avi_controller_info:
+  avi_credentials:
+    controller: "10.225.9.35"
+    username: "admin"
+    password: "password123"
+    api_version: "22.1.3"
+  avi_cloud: "vCenter-Lab"
+  tenant: "admin"

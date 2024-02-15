@@ -1,0 +1,20 @@
+---
+- name: Examples of using Ansible with Avi
+  hosts: localhost
+  gather_facts: false
+
+  collections: 
+    - vmware.alb
+
+  vars_files:
+    - "vars/creds.yaml"
+
+  tasks:
+
+    - name: Create HTTPPolicySet and attach to VS
+      include_role:
+        name: httppolicyset
+      vars:
+        - avi_info: "{{ avi_controller_info }}"
+
+# export ANSIBLE_HOST_KEY_CHECKING=False; ansible-playbook main.yaml

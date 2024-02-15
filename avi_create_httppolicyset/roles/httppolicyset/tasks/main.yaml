@@ -1,0 +1,45 @@
+- name: Create HTTPPolicySet
+  avi_httppolicyset:
+    avi_credentials: "{{ avi_info.avi_credentials }}"
+    http_request_policy:
+      rules:
+      - enable: true
+        index: 1
+        match:
+          client_ip:
+            addrs:
+            - addr: 10.10.10.10
+              type: V4
+            match_criteria: IS_IN
+        name: Rule1
+        redirect_action:
+          keep_query: true
+          port: 80
+          protocol: HTTP
+          status_code: HTTP_REDIRECT_STATUS_CODE_302
+    is_internal_policy: false
+    name: vs-app-1-HttpPolicySet1
+    tenant_ref: "/api/tenant/?name={{ avi_info.tenant }}"
+
+- name: Get HttpPolicySetUUID
+  avi_api_session:
+    avi_credentials: "{{ avi_info.avi_credentials }}"
+    http_method: get
+    path: "httppolicyset?name=vs-app-1-HttpPolicySet1"
+  register: httppolicyset_uuid
+
+# - name: Print uuid
+#   ansible.builtin.debug:
+#     var: httppolicyset_uuid.obj.results[0].uuid
+#     verbosity: 2
+
+- name: Attach HTTPPolicySet to VS 
+  avi_api_session:
+    avi_credentials: "{{ avi_info.avi_credentials }}"
+    http_method: patch
+    path: "virtualservice/virtualservice-29111fc3-d951-48d4-a1f0-d3591ddadcbc"
+    data:
+      add:
+        http_policies:
+        - http_policy_set_ref: "/api/httppolicyset/{{ httppolicyset_uuid.obj.results[0].uuid }}"
+        index: 12
