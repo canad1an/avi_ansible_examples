@@ -12,5 +12,6 @@ avi_controllers_info:
 global_info:
   username: "admin"
   password: "password123"
+  api_version: "22.1.5"
   tenant: "admin"
   state: "present" # present or absent
