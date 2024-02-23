@@ -1,0 +1,32 @@
+---
+- name: Examples of using Ansible with Avi
+  hosts: localhost
+  gather_facts: false
+
+  collections: 
+    - vmware.alb
+
+  vars_files:
+    - "vars/creds.yaml"
+
+  tasks:
+
+    - name: Deploy Health Monitors to all controllers
+      include_role:
+        name: health_monitors
+      with_items: "{{ avi_controllers_info }}"
+      vars:
+        - global_settings: "{{ global_info }}"
+      loop_control:
+        loop_var: avi_controllers_info
+
+    - name: Deploy Application Profiles to all controllers
+      include_role:
+        name: application_profiles
+      with_items: "{{ avi_controllers_info }}"
+      vars:
+        - global_settings: "{{ global_info }}"
+      loop_control:
+        loop_var: avi_controllers_info
+
+# export ANSIBLE_HOST_KEY_CHECKING=False; ansible-playbook main.yaml

@@ -1,0 +1,27 @@
+- name: Create Custom TCP Health Monitor
+  avi_healthmonitor:
+    avi_credentials: "{{ avi_controllers_info.avi_credentials }}"
+    failed_checks: 2
+    is_federated: false
+    name: custom-tcp
+    receive_timeout: 4
+    send_interval: 10
+    successful_checks: 2
+    tcp_monitor:
+      tcp_half_open: false
+    tenant_ref: "/api/tenant/?name={{ global_settings.tenant }}"
+    type: HEALTH_MONITOR_TCP
+    state: "{{ global_settings.state }}"
+
+- name: Create Custom Ping Health Monitor
+  avi_healthmonitor:
+    avi_credentials: "{{ avi_controllers_info.avi_credentials }}"
+    failed_checks: 2
+    is_federated: false
+    name: custom-ping
+    receive_timeout: 4
+    send_interval: 10
+    successful_checks: 2
+    tenant_ref: "/api/tenant/?name={{ global_settings.tenant }}"
+    type: HEALTH_MONITOR_PING
+    state: "{{ global_settings.state }}"

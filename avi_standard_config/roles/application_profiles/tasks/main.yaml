@@ -1,0 +1,98 @@
+- name: Create Custom TCP Health Monitor
+  avi_applicationprofile:
+    avi_credentials: "{{ avi_controllers_info.avi_credentials }}"
+    dos_rl_profile:
+      rl_profile:
+        client_ip_connections_rate_limit:
+          action:
+            status_code: HTTP_LOCAL_RESPONSE_STATUS_CODE_429
+            type: RL_ACTION_RESET_CONN
+          explicit_tracking: false
+          fine_grain: false
+          rate_limiter:
+            burst_sz: 0
+            count: 1000000000
+            period: 1
+    name: custom-l4-profile
+    preserve_client_ip: false
+    preserve_client_port: false
+    tcp_app_profile:
+      ftp_profile:
+        deactivate_active: false
+        deactivate_passive: false
+      proxy_protocol_enabled: false
+      proxy_protocol_version: PROXY_PROTOCOL_VERSION_1
+      ssl_client_certificate_mode: SSL_CLIENT_CERTIFICATE_NONE
+    type: APPLICATION_PROFILE_TYPE_L4
+    tenant_ref: "/api/tenant/?name={{ global_settings.tenant }}"
+    state: "{{ global_settings.state }}"
+
+- name: Create Custom Ping Health Monitor
+  avi_applicationprofile:
+    avi_credentials: "{{ avi_controllers_info.avi_credentials }}"
+    http_profile:
+      allow_dots_in_header_name: false
+      client_body_timeout: 30000
+      client_header_timeout: 10000
+      client_max_body_size: 0
+      client_max_header_size: 12
+      client_max_request_size: 48
+      collect_client_tls_fingerprint: false
+      connection_multiplexing_enabled: true
+      detect_ntlm_app: true
+      disable_keepalive_posts_msie6: true
+      disable_sni_hostname_check: false
+      enable_chunk_merge: true
+      enable_fire_and_forget: false
+      enable_request_body_buffering: false
+      enable_request_body_metrics: false
+      fwd_close_hdr_for_bound_connections: true
+      hsts_enabled: true
+      hsts_max_age: 365
+      hsts_subdomains_enabled: true
+      http2_profile:
+        enable_http2_server_push: false
+        http2_initial_window_size: 64
+        max_http2_concurrent_pushes_per_connection: 10
+        max_http2_concurrent_streams_per_connection: 128
+        max_http2_control_frames_per_connection: 1000
+        max_http2_empty_data_frames_per_connection: 1000
+        max_http2_header_field_size: 4096
+        max_http2_queued_frames_to_client_per_connection: 1000
+        max_http2_requests_per_connection: 1000
+      http_to_https: true
+      http_upstream_buffer_size: 0
+      httponly_enabled: true
+      keepalive_header: false
+      keepalive_timeout: 30000
+      max_bad_rps_cip: 0
+      max_bad_rps_cip_uri: 0
+      max_bad_rps_uri: 0
+      max_header_count: 256
+      max_keepalive_requests: 100
+      max_response_headers_size: 48
+      max_rps_cip: 0
+      max_rps_cip_uri: 0
+      max_rps_unknown_cip: 0
+      max_rps_unknown_uri: 0
+      max_rps_uri: 0
+      pass_through_x_accel_headers: false
+      post_accept_timeout: 30000
+      reset_conn_http_on_ssl_port: false
+      respond_with_100_continue: true
+      secure_cookie_enabled: true
+      server_side_redirect_to_https: true
+      ssl_client_certificate_mode: SSL_CLIENT_CERTIFICATE_NONE
+      use_app_keepalive_timeout: false
+      use_true_client_ip: false
+      websockets_enabled: true
+      x_forwarded_proto_enabled: true
+      xff_alternate_name: X-Forwarded-For
+      xff_enabled: true
+      xff_update: REPLACE_XFF_HEADERS
+    name: custom-http-profile-ssl
+    preserve_client_ip: false
+    preserve_client_port: false
+    type: APPLICATION_PROFILE_TYPE_HTTP
+    tenant_ref: "/api/tenant/?name={{ global_settings.tenant }}"
+    state: "{{ global_settings.state }}"
