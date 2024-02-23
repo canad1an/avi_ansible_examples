@@ -2,15 +2,15 @@ avi_controllers_info:
   - avi_credentials:
       controller: "10.225.9.35"
       username: "admin"
-      password: "password"
+      password: "password123"
       api_version: "22.1.5"
   - avi_credentials:
       controller: "10.225.9.36"
       username: "admin"
-      password: "password"
+      password: "password123"
       api_version: "22.1.5"
 global_info:
   username: "admin"
-  password: "password"
+  password: "password123"
   tenant: "admin"
   state: "present" # present or absent
