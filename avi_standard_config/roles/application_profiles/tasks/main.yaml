@@ -1,6 +1,12 @@
+- set_fact:
+    avi_cred: "{{ { 'controller': avi_controllers_info.avi_credentials.controller, \
+                    'username': global_settings.username if global_settings.username is defined else avi_controllers_info.avi_credentials.username, \
+                    'password': avi_controllers_info.avi_credentials.password if avi_controllers_info.avi_credentials.password is defined else global_settings.password, \
+                    'api_version': avi_controllers_info.avi_credentials.api_version if avi_controllers_info.avi_credentials.api_version is defined else global_settings.api_version } }}"
+
 - name: Create Custom TCP Health Monitor
   avi_applicationprofile:
-    avi_credentials: "{{ avi_controllers_info.avi_credentials }}"
+    avi_credentials: "{{ avi_cred }}"
     dos_rl_profile:
       rl_profile:
         client_ip_connections_rate_limit:
@@ -29,7 +35,7 @@
 
 - name: Create Custom Ping Health Monitor
   avi_applicationprofile:
-    avi_credentials: "{{ avi_controllers_info.avi_credentials }}"
+    avi_credentials: "{{ avi_cred }}"
     http_profile:
       allow_dots_in_header_name: false
       client_body_timeout: 30000
