@@ -1,0 +1,128 @@
+- set_fact:
+    avi_config_var: "{{ lookup('template','templates/app.j2') | from_yaml }}"
+  name: Create Empty List
+
+- name: Deploy Avi Application
+
+  include_role:
+    name: vmware.alb.aviconfig
+  vars:
+    avi_config: "{{avi_config_var | from_yaml}}"
+
+# - set_fact:
+#     avi_cred: "{{ { 'controller': avi_controllers_info.avi_credentials.controller, \
+#                     'username': global_settings.username if global_settings.username is defined else avi_controllers_info.avi_credentials.username, \
+#                     'password': avi_controllers_info.avi_credentials.password if avi_controllers_info.avi_credentials.password is defined else global_settings.password, \
+#                     'api_version': avi_controllers_info.avi_credentials.api_version if avi_controllers_info.avi_credentials.api_version is defined else global_settings.api_version } }}"
+
+
+# - name: Create Pool
+#   avi_pool:
+#     avi_credentials: "{{ avi_info.avi_credentials }}"
+#     # api_context: "{{ avi_api_context | default(omit) }}"
+#     name: "pool-{{ applications.app_name }}"
+#     tenant: "{{ avi_info.tenant }}"
+#     cloud_ref: "/api/cloud/?name={{ avi_info.avi_cloud }}"
+#     state: "{{ applications.state }}"
+#     servers: "{{ pool_servers }}"
+#     health_monitor_refs:
+#       - "/api/healthmonitor/?name={{ applications.app_health_monitor }}"
+
+# - name: Avi Deploy new virtual
+#   include_role:
+#     name: avinetworks.aviconfig
+#   vars:
+#     cloud_name: "Default-Cloud"
+#     tenant_name: "admin"
+#     app_name: "{{ ApplicationName }}"
+#     app_type: "{{ ApplicationType }}"
+#     env: "{{ Environment }}"
+#     avi_controller: "{{ ctrl }}"
+#     location: "{{ loc }}"
+#     department: "{{ Department }}"
+#     health_monitor: "{{ HealthMonitor }}"
+#     listening_port: "{{ ListeningPort }}"
+#     pool_members: "{{  PoolMembers.split('::') }}"
+#     avi_config_state: "present"
+#     avi_username: "{{ aws_tower_username }}"
+#     avi_password: "{{ aws_tower_password }}"
+#     api_version: "{{ avi_version }}"
+#     aws_subnet: "{{ aws_network_ref }}"
+#     tmp_avi_config: "{{ lookup('template','templates/vs_create.j2') | from_yaml }}"
+#     avi_config: "{{tmp_avi_config.avi_config }}"
+
+
+
+# - set_fact:
+#     site: "{{ site | default([]) + [{ 'site': item.site }] }}"
+#   loop: "{{ applications.sites }}"
+#   name: Get Sites
+
+# - set_fact:
+#     site: "{{ site | default([]) + [{ 'site': item.site }] }}"
+#   loop: "{{ applications.sites }}"
+#   when:
+#     - item.key is not search('loop')
+#   name: Get Pool Members per site
+
+# - name: Print return information from the previous task
+#   ansible.builtin.debug:
+#     var: site
+#     verbosity: 2
+
+
+
+# - set_fact:
+#     pool_servers: "{{ pool_servers | default([]) + [{'port': item.port, 'ip': {'type': 'V4', 'addr': item.ip_address },'enabled': item.enabled}]}}"
+#   loop: "{{ applications.app_pool_members }}"
+#   name: Build Pool Members
+
+# - name: Create vsvip
+#   avi_vsvip:
+#     avi_credentials: "{{ avi_info.avi_credentials }}"
+#     # api_context: "{{ avi_api_context | default(omit) }}"
+#     name: "vsvip-{{ applications.app_name }}"
+#     vrf_context_ref: "/api/vrfcontext/?name=global"
+#     tenant_ref: "/api/tenant/?name={{ avi_info.tenant }}"
+#     cloud_ref: "/api/cloud/?name={{ avi_info.avi_cloud }}"
+#     state: "{{ applications.state }}"
+#     vip:
+#       - vip_id: '1'
+#         avi_allocated_fip: true
+#         auto_allocate_ip: true
+#         enabled: true
+#         auto_allocate_floating_ip: false
+#         avi_allocated_vip: true
+#         auto_allocate_ip_type: V4_ONLY
+
+# - debug: var=avi_api_context
+
+# - name: Create Pool
+#   avi_pool:
+#     avi_credentials: "{{ avi_info.avi_credentials }}"
+#     # api_context: "{{ avi_api_context | default(omit) }}"
+#     name: "pool-{{ applications.app_name }}"
+#     tenant: "{{ avi_info.tenant }}"
+#     cloud_ref: "/api/cloud/?name={{ avi_info.avi_cloud }}"
+#     state: "{{ applications.state }}"
+#     servers: "{{ pool_servers }}"
+#     health_monitor_refs:
+#       - "/api/healthmonitor/?name={{ applications.app_health_monitor }}"
+
+# - name: Create VirtualService
+#   avi_virtualservice:
+#     avi_credentials: "{{ avi_info.avi_credentials }}"
+#     # api_context: "{{ avi_api_context | default(omit) }}"
+#     name: "vs-{{ applications.app_name }}"
+#     vrf_context_ref: "/api/vrfcontext/?name=global"
+#     tenant: "{{ avi_info.tenant }}"
+#     cloud_ref: "/api/cloud/?name={{ avi_info.avi_cloud }}"
+#     state: "{{ applications.state }}"
+#     application_profile_ref: "/api/applicationprofile/?name={{ applications.app_http_profile }}"
+#     enabled: true
+#     network_profile_ref: "/api/networkprofile/?name={{ applications.app_network_profile }}"
+#     pool_ref: "/api/pool/?name=pool-{{ applications.app_name }}"
+#     vsvip_ref: "/api/vsvip/?name=vsvip-{{ applications.app_name }}"
+#     services:
+#       - enable_ssl: false
+#         port: "{{ applications.app_port }}"

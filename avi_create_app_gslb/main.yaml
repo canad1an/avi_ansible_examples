@@ -1,0 +1,94 @@
+---
+- name: Examples of using Ansible with Avi
+  hosts: localhost
+  gather_facts: false
+
+
+  collections: 
+    - vmware.alb
+
+  vars_files:
+    - "vars/creds.yaml"
+
+  tasks:
+
+    - set_fact:
+        avi_cred_sf: "{{ { 'controller': avi_controller_info.SanFrancisco.controller, \
+                        'username': avi_controller_info.username, \
+                        'password': avi_controller_info.password, \
+                        'api_version': avi_controller_info.api_version } }}"
+
+    - set_fact:
+        avi_cred_tk: "{{ { 'controller': avi_controller_info.Tokyo.controller, \
+                        'username': avi_controller_info.username, \
+                        'password': avi_controller_info.password, \
+                        'api_version': avi_controller_info.api_version } }}"
+
+    - name: Deploy Avi Application in San Francisco  
+      include_role:
+        name: vmware.alb.aviconfig
+      vars:
+        avi_credentials: "{{ avi_cred_sf }}"
+        tmp_avi_config: "{{ lookup('template','templates/app.j2') | from_yaml }}"
+        avi_config: "{{tmp_avi_config.avi_config }}"
+        loop_site: "San Francisco"
+        avi_role_config_log_mode: 'False' #To enable logs for troubleshooting
+
+    - name: Deploy Avi Application in Tokyo  
+      include_role:
+        name: vmware.alb.aviconfig
+      vars:
+        avi_credentials: "{{ avi_cred_tk }}"
+        tmp_avi_config: "{{ lookup('template','templates/app.j2') | from_yaml }}"
+        avi_config: "{{tmp_avi_config.avi_config }}"
+        loop_site: "Tokyo"
+        avi_role_config_log_mode: 'False' #To enable logs for troubleshooting
+
+    - name: Lookup San Francisco Cluster uuid
+      vmware.alb.avi_api_session:
+        avi_credentials: "{{ avi_cred_sf }}"
+        controller: "{{ avi_controller_info.SanFrancisco.controller }}"
+        http_method: get
+        path: cluster
+      register: sf_cluster_uuid
+
+    - name: Lookup San Francisco VS uuid
+      vmware.alb.avi_api_session:
+        avi_credentials: "{{ avi_cred_sf }}"
+        controller: "{{ avi_controller_info.SanFrancisco.controller }}"
+        http_method: get
+        path: virtualservice
+        tenant: "{{ application.tenant }}"
+        params:
+          { name: "vs-{{ application.app_name }}", join: vsvip_ref }
+      register: sf_vs_uuid
+
+    - name: Lookup Tokyo Cluster uuid
+      vmware.alb.avi_api_session:
+        avi_credentials: "{{ avi_cred_tk }}"
+        controller: "{{ avi_controller_info.Tokyo.controller }}"
+        http_method: get
+        path: cluster
+      register: tk_cluster_uuid
+
+    - name: Lookup Tokyo VS uuid
+      vmware.alb.avi_api_session:
+        avi_credentials: "{{ avi_cred_tk }}"
+        controller: "{{ avi_controller_info.Tokyo.controller }}"
+        http_method: get
+        path: virtualservice
+        tenant: "{{ application.tenant }}"
+        params:
+          { name: "vs-{{ application.app_name }}", join: vsvip_ref }
+      register: tk_vs_uuid
+
+    - name: Deploy GSLB Service for Avi Application   
+      include_role:
+        name: vmware.alb.aviconfig
+      vars:
+        avi_credentials: "{{ avi_cred_tk }}"
+        tmp_avi_config: "{{ lookup('template','templates/gslb.j2') | from_yaml }}"
+        avi_config: "{{tmp_avi_config.avi_config }}"
+        avi_role_config_log_mode: 'False' #To enable logs for troubleshooting
+
+# export ANSIBLE_HOST_KEY_CHECKING=False; ansible-playbook main.yaml

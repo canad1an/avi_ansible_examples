@@ -1,0 +1,61 @@
+#jinja2: lstrip_blocks: True
+{% for site in applications.sites %}
+{#   Site {{ loop.index }} is {{ site.site }}. #}
+
+avi_config:
+  pool:
+    - name: "{{ loop.index }}"
+      api_version: "{{ avi_info.api_version }}"
+{#       avi_config_state: present
+      name: "{{ app_name }}-pool"
+      cloud_ref: "/api/cloud?name={{ cloud_name | default('Default-Cloud') }}"
+      tenant: "{{ tenant_name | default('admin') }}"
+      tenant_ref: "/api/tenant?name={{ tenant_name | default('admin') }}"
+      lb_algorithm: LB_ALGORITHM_ROUND_ROBIN
+      default_server_port: "80"
+
+        {% if location == "ibm-dallas" and pool_members is iterable and (pool_members is not string and pool_members is not mapping) %}
+      servers:
+          {% for poolm in pool_members %}
+          {% set pm_details = poolm.split(',') %}
+            {% if pm_details[3] == "dallas" %}
+        - ip:
+           addr: "{{ pm_details[0] }}"
+           type: 'V4'
+           enabled: "{{ pm_details[2] }}"
+          port: "{{ pm_details[1] }}"
+            {% endif %}
+          {% endfor %}
+        {% elif location == "ibm-london" and pool_members is iterable and (pool_members is not string and pool_members is not mapping) %}
+      servers:
+          {% for poolm in pool_members %}
+          {% set pm_details = poolm.split(',') %}
+            {% if pm_details[3] == "london" %}
+        - ip:
+           addr: "{{ pm_details[0] }}"
+           type: 'V4'
+           enabled: "{{ pm_details[2] }}"
+          port: "{{ pm_details[1] }}"
+            {% endif %}
+          {% endfor %}
+        {% elif pool_members is iterable and (pool_members is not string and pool_members is not mapping) %}
+      servers:
+          {% for poolm in pool_members %}
+          {% set pm_details = poolm.split(',') %}
+        - ip:
+           addr: "{{ pm_details[0] }}"
+           type: 'V4'
+           enabled: "{{ pm_details[2] }}"
+          port: "{{ pm_details[1] }}"
+          {% endfor %}
+        {% endif %}
+      {% if backend_ssl == 1 %}
+      sni_enabled: true
+      ssl_profile_ref: "/api/sslprofile?name=System-Standard"
+      {% endif %}
+      {% if hm_prof != "" %}
+      health_monitor_refs: "/api/healthmonitor?name={{ hm_prof }}"
+      inline_health_monitor: true
+      {% endif %} #}
+
+{% endfor %}

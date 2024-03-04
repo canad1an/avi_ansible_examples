@@ -1,0 +1,31 @@
+#jinja2: lstrip_blocks: True
+avi_config:
+
+  gslbservice:
+    - name: "gs-{{ application.app_name }}"
+      tenant: "{{ application.tenant }}"
+      state: "{{ application.state }}"
+      domain_names:
+      - "{{ application.app_name }}.{{ application.domain_name }}"
+      down_response: 
+        type: GSLB_SERVICE_DOWN_RESPONSE_NONE
+      groups:
+      - members:
+        - cluster_uuid: "{{ sf_cluster_uuid.obj.uuid }}"
+          ip:
+            addr: "{{ sf_vs_uuid['obj']['results'][0]['vsvip_ref_data']['vip'][0]['ip_address']['addr'] }}"                
+            type: V4
+          vs_uuid: "{{ sf_vs_uuid['obj']['results'][0]['uuid'] }}"
+        - cluster_uuid: "{{ tk_cluster_uuid.obj.uuid }}"
+          ip:
+            addr: "{{ tk_vs_uuid['obj']['results'][0]['vsvip_ref_data']['vip'][0]['ip_address']['addr'] }}"
+            type: V4
+          vs_uuid: "{{ tk_vs_uuid['obj']['results'][0]['uuid'] }}"
+        name: "gs-pool-1"
+        priority: 9
+      health_monitor_refs:
+        - /api/healthmonitor?name=System-GSLB-TCP
+      controller_health_status_enabled: true
+      pool_algorithm: GSLB_SERVICE_ALGORITHM_PRIORITY
+      enabled: true
+      is_federated: true

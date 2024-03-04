@@ -1,0 +1,41 @@
+application:
+  app_name: app-1
+  domain_name: gslb.home.lab
+  tenant: "admin"
+  sites:
+    - location: "San Francisco"
+      avi_cloud: "vcenter"
+      ip_address: "10.11.12.13"
+      app_pool_members:
+        - ip_address: "10.10.10.10"
+          port: 80
+          enabled: true
+        - ip_address: "10.10.10.11"
+          port: 80
+          enabled: true
+    - location: "Tokyo"
+      avi_cloud: "vcenter"
+      ip_address: "10.11.12.14"
+      app_pool_members:
+        - ip_address: "10.10.10.10"
+          port: 80
+          enabled: true
+        - ip_address: "10.10.10.11"
+          port: 80
+          enabled: true
+  app_port: 80
+  app_http_profile: "System-HTTP"
+  app_network_profile: "System-TCP-Proxy"
+  app_health_monitor: "System-TCP"
+  state: present
+avi_controller_info:
+  SanFrancisco:
+    controller: "sanfran.home.lab"
+    avi_cloud: "vcenter"
+  Tokyo:
+    controller: "tokyo.home.lab"
+    avi_cloud: "vcenter"
+  username: "admin"
+  password: "password123"
+  api_version: "22.1.5"
+  avi_cloud: "vcenter"

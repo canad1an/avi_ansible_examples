@@ -1,0 +1,61 @@
+#jinja2: lstrip_blocks: True
+{% for site in application.sites %}
+
+  {% if site.location == loop_site %}
+
+avi_config:
+
+{#   tenant:
+    - name: "{{ application.tenant }}"
+      config_settings:
+        se_in_provider_context: true
+        tenant_access_to_provider_se: true
+        tenant_vrf: false
+      local: true #}
+
+  pool:
+    - name: "pool-{{ application.app_name }}"
+      tenant: "{{ application.tenant }}"
+      cloud_ref: "/api/cloud/?name={{ avi_controller_info.avi_cloud }}"
+      tenant: "{{ application.tenant }}"
+      state: "{{ application.state }}"
+      health_monitor_refs: "/api/healthmonitor/?name={{ application.app_health_monitor }}"
+      servers:
+          {% for poolm in site.app_pool_members %}
+        - ip:
+           addr: "{{ poolm.ip_address }}"
+           type: 'V4'
+           enabled: "{{ poolm.enabled }}"
+          port: "{{ poolm.port }}"
+          {% endfor %}
+
+  vsvip:
+    - name: "vsvip-{{ application.app_name }}"
+      vrf_context_ref: "/api/vrfcontext/?name=global"
+      tenant: "{{ application.tenant }}"
+      cloud_ref: "/api/cloud/?name={{ avi_controller_info.avi_cloud }}"
+      state: "{{ application.state }}"
+      vip:
+        - vip_id: "0"
+          ip_address: 
+            addr: "{{ site.ip_address }}"
+            type: V4
+
+  virtualservice:
+    - name: "vs-{{ application.app_name }}"
+      vrf_context_ref: "/api/vrfcontext/?name=global"
+      tenant: "{{ application.tenant }}"
+      cloud_ref: "/api/cloud/?name={{ avi_controller_info.avi_cloud }}"
+      state: "{{ application.state }}"
+      application_profile_ref: "/api/applicationprofile/?name={{ application.app_http_profile }}"
+      enabled: true
+      network_profile_ref: "/api/networkprofile/?name={{ application.app_network_profile }}"
+      pool_ref: "/api/pool/?name=pool-{{ application.app_name }}"
+      vsvip_ref: "/api/vsvip/?name=vsvip-{{ application.app_name }}"
+      services:
+        - enable_ssl: false
+          port: "{{ application.app_port }}"
+
+  {% endif %}
+
+{% endfor %}
