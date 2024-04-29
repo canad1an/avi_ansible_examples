@@ -6,7 +6,7 @@
 avi_config:
 
 {#   tenant:
-    - name: "{{ application.tenant }}"
+    - name: "{{ avitenant }}"
       config_settings:
         se_in_provider_context: true
         tenant_access_to_provider_se: true
@@ -15,9 +15,8 @@ avi_config:
 
   pool:
     - name: "pool-{{ application.app_name }}"
-      tenant: "{{ application.tenant }}"
+      tenant: "{{ avitenant }}"
       cloud_ref: "/api/cloud/?name={{ avi_controller_info.avi_cloud }}"
-      tenant: "{{ application.tenant }}"
       state: "{{ application.state }}"
       health_monitor_refs: "/api/healthmonitor/?name={{ application.app_health_monitor }}"
       servers:
@@ -32,7 +31,7 @@ avi_config:
   vsvip:
     - name: "vsvip-{{ application.app_name }}"
       vrf_context_ref: "/api/vrfcontext/?name=global"
-      tenant: "{{ application.tenant }}"
+      tenant: "{{ avitenant }}"
       cloud_ref: "/api/cloud/?name={{ avi_controller_info.avi_cloud }}"
       state: "{{ application.state }}"
       vip:
@@ -44,7 +43,7 @@ avi_config:
   virtualservice:
     - name: "vs-{{ application.app_name }}"
       vrf_context_ref: "/api/vrfcontext/?name=global"
-      tenant: "{{ application.tenant }}"
+      tenant: "{{ avitenant }}"
       cloud_ref: "/api/cloud/?name={{ avi_controller_info.avi_cloud }}"
       state: "{{ application.state }}"
       application_profile_ref: "/api/applicationprofile/?name={{ application.app_http_profile }}"
