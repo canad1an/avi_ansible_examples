@@ -3,7 +3,7 @@ avi_config:
 
   gslbservice:
     - name: "gs-{{ application.app_name }}"
-      tenant: "{{ application.tenant }}"
+      tenant: "{{ avitenant }}"
       state: "{{ application.state }}"
       domain_names:
       - "{{ application.app_name }}.{{ application.domain_name }}"
