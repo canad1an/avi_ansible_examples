@@ -38,4 +38,4 @@ avi_controller_info:
   username: "admin"
   # password: "password123"
   api_version: "22.1.5"
-  avi_cloud: "vcenter_cloud"
+  avi_cloud: "vmware_cloud"
