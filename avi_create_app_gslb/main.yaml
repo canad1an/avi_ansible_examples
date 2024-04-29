@@ -15,13 +15,13 @@
     - set_fact:
         avi_cred_sf: "{{ { 'controller': avi_controller_info.SanFrancisco.controller, \
                         'username': avi_controller_info.username, \
-                        'password': avi_controller_info.password, \
+                        'password': avipassword, \
                         'api_version': avi_controller_info.api_version } }}"
 
     - set_fact:
         avi_cred_tk: "{{ { 'controller': avi_controller_info.Tokyo.controller, \
                         'username': avi_controller_info.username, \
-                        'password': avi_controller_info.password, \
+                        'password': avipassword, \
                         'api_version': avi_controller_info.api_version } }}"
 
     - name: Deploy Avi Application in San Francisco  
