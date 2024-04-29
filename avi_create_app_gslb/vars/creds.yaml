@@ -31,11 +31,11 @@ application:
 avi_controller_info:
   SanFrancisco:
     controller: "sanfran.home.lab"
-    avi_cloud: "vcenter"
+    avi_cloud: "vcenter_cloud"
   Tokyo:
     controller: "tokyo.home.lab"
     avi_cloud: "vcenter"
   username: "admin"
   # password: "password123"
   api_version: "22.1.5"
-  avi_cloud: "vcenter"
+  avi_cloud: "vcenter_cloud"
