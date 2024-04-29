@@ -47,7 +47,7 @@
     - name: Lookup San Francisco Cluster uuid
       vmware.alb.avi_api_session:
         avi_credentials: "{{ avi_cred_sf }}"
-        controller: "{{ avi_controller_info.SanFrancisco.controller }}"
+        controller: "{{ avisfctrl }}"
         http_method: get
         path: cluster
       register: sf_cluster_uuid
@@ -55,7 +55,7 @@
     - name: Lookup San Francisco VS uuid
       vmware.alb.avi_api_session:
         avi_credentials: "{{ avi_cred_sf }}"
-        controller: "{{ avi_controller_info.SanFrancisco.controller }}"
+        controller: "{{ avisfctrl }}"
         http_method: get
         path: virtualservice
         tenant: "{{ avitenant }}"
@@ -66,7 +66,7 @@
     - name: Lookup Tokyo Cluster uuid
       vmware.alb.avi_api_session:
         avi_credentials: "{{ avi_cred_tk }}"
-        controller: "{{ avi_controller_info.Tokyo.controller }}"
+        controller: "{{ avitkctrl }}"
         http_method: get
         path: cluster
       register: tk_cluster_uuid
@@ -74,7 +74,7 @@
     - name: Lookup Tokyo VS uuid
       vmware.alb.avi_api_session:
         avi_credentials: "{{ avi_cred_tk }}"
-        controller: "{{ avi_controller_info.Tokyo.controller }}"
+        controller: "{{ avitkctrl }}"
         http_method: get
         path: virtualservice
         tenant: "{{ avitenant }}"
