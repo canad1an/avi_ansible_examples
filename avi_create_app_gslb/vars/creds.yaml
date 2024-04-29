@@ -1,6 +1,6 @@
 application:
   app_name: app-1
-  domain_name: gslb.home.lab
+  domain_name: global.avidemo.vmware.com
   # tenant: "admin"
   sites:
     - location: "San Francisco"
