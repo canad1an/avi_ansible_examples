@@ -13,13 +13,13 @@
   tasks:
 
     - set_fact:
-        avi_cred_sf: "{{ { 'controller': avi_controller_info.SanFrancisco.controller, \
+        avi_cred_sf: "{{ { 'controller': avisfctrl, \
                         'username': avi_controller_info.username, \
                         'password': avipassword, \
                         'api_version': avi_controller_info.api_version } }}"
 
     - set_fact:
-        avi_cred_tk: "{{ { 'controller': avi_controller_info.Tokyo.controller, \
+        avi_cred_tk: "{{ { 'controller': avitkctrl, \
                         'username': avi_controller_info.username, \
                         'password': avipassword, \
                         'api_version': avi_controller_info.api_version } }}"
