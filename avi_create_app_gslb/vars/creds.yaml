@@ -1,7 +1,7 @@
 application:
   app_name: app-1
   domain_name: gslb.home.lab
-  tenant: "admin"
+  # tenant: "admin"
   sites:
     - location: "San Francisco"
       avi_cloud: "vcenter"
@@ -36,6 +36,6 @@ avi_controller_info:
     controller: "tokyo.home.lab"
     avi_cloud: "vcenter"
   username: "admin"
-  password: "password123"
+  # password: "password123"
   api_version: "22.1.5"
   avi_cloud: "vcenter"
