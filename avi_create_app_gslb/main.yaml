@@ -58,7 +58,7 @@
         controller: "{{ avi_controller_info.SanFrancisco.controller }}"
         http_method: get
         path: virtualservice
-        tenant: "{{ application.tenant }}"
+        tenant: "{{ avitenant }}"
         params:
           { name: "vs-{{ application.app_name }}", join: vsvip_ref }
       register: sf_vs_uuid
@@ -77,7 +77,7 @@
         controller: "{{ avi_controller_info.Tokyo.controller }}"
         http_method: get
         path: virtualservice
-        tenant: "{{ application.tenant }}"
+        tenant: "{{ avitenant }}"
         params:
           { name: "vs-{{ application.app_name }}", join: vsvip_ref }
       register: tk_vs_uuid
